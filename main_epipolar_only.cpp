@@ -28,7 +28,6 @@ int main(int argc, char** argv)
     Mat i_prev, i_curr;
 
     int MAX_FEATURES = 500;
-    double GOOD_MATCH_RATIO = 0.3;
 
     Ptr<Feature2D> orb = ORB::create(MAX_FEATURES);
 
@@ -69,6 +68,7 @@ int main(int argc, char** argv)
     //undistort the prev frame
     undistort(i_prev, i_undistort, camera_matrix, distCoeffs, newCameraMatrix);
     i_prev = i_undistort.clone();
+        vector<Point2f> pts1, pts2;
     while(!i_prev.empty())
     {
         // capture new frame
@@ -93,31 +93,25 @@ int main(int argc, char** argv)
 
         Mat i_prev_kp, i_curr_kp;
 
-        drawKeypoints(i_prev, keypoints1, i_prev_kp, Scalar::all(-1),DrawMatchesFlags::DEFAULT);
-        drawKeypoints(i_curr, keypoints2, i_curr_kp, Scalar::all(-1),DrawMatchesFlags::DEFAULT);
+        //drawKeypoints(i_prev, keypoints1, i_prev_kp, Scalar::all(-1),DrawMatchesFlags::DEFAULT);
+        //drawKeypoints(i_curr, keypoints2, i_curr_kp, Scalar::all(-1),DrawMatchesFlags::DEFAULT);
 
         //imshow("prev keypoints",i_prev_kp);
         //imshow("curr keypoints",i_curr_kp);
 
-        vector<Point2f> pts1, pts2;
         MyMatcher *mmc = new MyMatcher();
 
-        mmc -> matchKeypoints(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2);
+        ////use pure feature matching
+        //mmc -> matchKeypoints(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+
+        ////use optical flow
+        //mmc -> matchKeypointsWithKLTFusion(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+
+        ////use optical flow as primary
+        mmc -> KLTthenFeature(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
 
         cout<<"pts1 size = "<<pts1.size()<<endl;
         cout<<"pts2 size = "<<pts2.size()<<endl;
-
-        //draw matches
-        vector<DMatch> matches = mmc -> matches;
-        Mat i_matches;
-        drawMatches(i_prev,keypoints1,i_curr,keypoints2,matches,i_matches);
-        imshow("matches_feature", i_matches);
-
-        cout<<matches.size()<<" of common keypoints found between prev and curr."<<endl;
-
-        //use optical flow
-        mmc -> matchKeypointsWithKLTFusion(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
-
 
 
 
@@ -175,7 +169,7 @@ int main(int argc, char** argv)
 
 
         i_prev = i_curr.clone();
-
+        pts1 = pts2;
         waitKey(0);
     }
 
