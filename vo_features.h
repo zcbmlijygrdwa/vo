@@ -1,3 +1,5 @@
+#ifndef vo_features_hpp
+#define vo_features_hpp
 /*
 
 The MIT License
@@ -44,6 +46,19 @@ THE SOFTWARE.
 using namespace cv;
 using namespace std;
 
+Point2f operator+(Point2f p1, int i)
+{
+    p1.x += i;
+    return p1;
+}
+
+    template <class T>
+T diff(Point_<T> p1, Point_<T> p2)
+{
+    return abs(p1.x - p2.x) + abs(p1.y - p2.y);
+}
+
+
 void featureTracking(Mat img_1, Mat img_2, vector<Point2f>& points1, vector<Point2f>& points2, vector<uchar>& status)	{ 
 
 //this function automatically gets rid of points for which tracking fails
@@ -79,3 +94,5 @@ void featureDetection(Mat img_1, vector<Point2f>& points1)	{   //uses FAST as of
   FAST(img_1, keypoints_1, fast_threshold, nonmaxSuppression);
   KeyPoint::convert(keypoints_1, points1, vector<int>());
 }
+
+#endif

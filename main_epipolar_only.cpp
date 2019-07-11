@@ -5,23 +5,12 @@
 
 #include <opencv2/features2d.hpp>
 #include "vo_features.h"
+#include "MyMatcher.hpp"
 
 using namespace std;
 
 using namespace cv;
 
-
-Point2f operator+(Point2f p1, int i)
-{
-    p1.x += i;
-    return p1;
-}
-
-    template <class T>
-T diff(Point_<T> p1, Point_<T> p2)
-{
-    return abs(p1.x - p2.x) + abs(p1.y - p2.y);
-}
 
 
 
@@ -31,8 +20,6 @@ int main(int argc, char** argv)
     cout<<"VO main program!"<<endl;
 
     Mat R_f, t_f; //the final rotation and tranlation vectors containing the 
-
-    vector<uchar> status;
 
     float scale = 1;
 
@@ -112,37 +99,25 @@ int main(int argc, char** argv)
         //imshow("prev keypoints",i_prev_kp);
         //imshow("curr keypoints",i_curr_kp);
 
+        vector<Point2f> pts1, pts2;
+        MyMatcher *mmc = new MyMatcher();
 
-        //matching keypoints
-        vector<DMatch> matches;
+        mmc -> matchKeypoints(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2);
 
-        Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
-
-        matcher -> match(descriptors1, descriptors2, matches, Mat());
-
-        //sort matches by score
-        std::sort(matches.begin(),matches.end());
-
-        //remove bad matches
-        int numGoodMatch = matches.size()*GOOD_MATCH_RATIO;        
-        matches.erase(matches.begin()+numGoodMatch,matches.end());
+        cout<<"pts1 size = "<<pts1.size()<<endl;
+        cout<<"pts2 size = "<<pts2.size()<<endl;
 
         //draw matches
+        vector<DMatch> matches = mmc -> matches;
         Mat i_matches;
         drawMatches(i_prev,keypoints1,i_curr,keypoints2,matches,i_matches);
         imshow("matches_feature", i_matches);
 
         cout<<matches.size()<<" of common keypoints found between prev and curr."<<endl;
 
+        //use optical flow
+        mmc -> matchKeypointsWithKLTFusion(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
 
-
-
-        ////refine matching by Ransac + homogeneous matrix
-        //int ransacTime = 100;
-        //for(int i = 0 ; i < ransacTime ; i++)
-        //{
-        //    select 3 points
-        //}
 
 
 
@@ -151,81 +126,6 @@ int main(int argc, char** argv)
         {
             //use epipolar f=geometry to solve for fundamental matrix
             Mat fundamental_matrix;
-            vector<Point2f> pts1, pts2;
-            for(int i = 0 ; i < matches.size() ; i++)
-            {
-                pts1.push_back(keypoints1[matches[i].queryIdx].pt);
-                pts2.push_back(keypoints2[matches[i].trainIdx].pt);
-
-                //cout<<"Pts1 added point: "<<keypoints1[matches[i].queryIdx].pt<<endl;
-                //cout<<"Pts2 added point: "<<keypoints2[matches[i].trainIdx].pt<<endl;
-                //cout<<"-------"<<endl;
-            }
-
-            cout<<"pts1 size = "<<pts1.size()<<endl;
-            cout<<"pts2 size = "<<pts2.size()<<endl;
-
-
-
-            //use optical flow
-            vector<Point2f> pts2_optiflow;
-            featureTracking(i_prev, i_curr, pts1, pts2_optiflow, status);
-
-
-            for(int i = 0 ; i < status.size() ; i++)
-            {
-                cout<<int(status[i])<<",";
-            }
-            cout<<endl;
-
-
-            //draw tracked matches
-            Mat i_matches_track;
-            cv::hconcat(i_prev, i_curr, i_matches_track);
-            cvtColor(i_matches_track,i_matches_track,CV_GRAY2BGR);
-
-
-            for(int i = 0 ; i < pts1.size() ; i++)
-            {
-                arrowedLine(i_matches_track, pts1[i], Point2f(pts2_optiflow[i]+i_prev.cols), Scalar( 255, 0, 0), 1, 8, 0, 0.1);
-            }
-            imshow("matches_track", i_matches_track);
-
-            cout<<matches.size()<<" of points are tracked between prev and curr."<<endl;
-
-
-
-            //further refine matches based on tracked results
-            float thres = 1;
-            vector<Point2f> pts1_final, pts2_final;
-            for(int i = 0 ; i < pts1.size(); i++)
-            {
-                if(diff(pts2[i] , pts2_optiflow[i])<thres)
-                {
-                    pts1_final.push_back(pts1[i]);
-                    pts2_final.push_back(pts2[i]);
-                }
-            }
-
-            //draw tracked matches
-            Mat i_matches_fuse;
-            cv::hconcat(i_prev, i_curr, i_matches_fuse);
-            cvtColor(i_matches_fuse,i_matches_fuse,CV_GRAY2BGR);
-
-
-            for(int i = 0 ; i < pts1_final.size() ; i++)
-            {
-                arrowedLine(i_matches_fuse, pts1_final[i], Point2f(pts2_final[i]+i_prev.cols), Scalar( 255, 0, 0), 1, 8, 0, 0.1);
-            }
-            imshow("matches_fuse", i_matches_fuse);
-
-            cout<<"After fusing feature matching and KLT results, "<<pts1_final.size()<<" points are mathced with "<<pts2_final.size()<<" points."<<endl;
-
-
-            pts1 = pts1_final;
-            pts2 = pts2_final;
-
-
 
             //find essental matrix for pose recovery
             Mat essential_matrix;

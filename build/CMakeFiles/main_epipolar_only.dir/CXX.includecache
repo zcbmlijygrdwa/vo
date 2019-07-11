@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/zhenyu/vo/MyMatcher.hpp
+vo_features.h
+/home/zhenyu/vo/vo_features.h
+
 /home/zhenyu/vo/main_epipolar_only.cpp
 iostream
 -
@@ -15,6 +19,8 @@ opencv2/features2d.hpp
 -
 vo_features.h
 /home/zhenyu/vo/vo_features.h
+MyMatcher.hpp
+/home/zhenyu/vo/MyMatcher.hpp
 
 /home/zhenyu/vo/vo_features.h
 opencv2/video/tracking.hpp
