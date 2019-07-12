@@ -8,6 +8,9 @@
 #include "Camera.hpp"
 #include "core/Calculation.hpp"
 
+#include "MapPoint.hpp"
+#include "MapViewer.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -132,15 +135,14 @@ int main(int argc, char** argv)
                 cout<<"projection_matrix_prev = "<<endl<<projection_matrix_prev<<endl;
                 cout<<"projection_matrix_curr = "<<endl<<projection_matrix_curr<<endl;
 
+
                 for(int i = 0 ; i < pts1.size() ; i++)
                 {
                     Mat x3D_temp;
                     Calculation::Triangulate(pts1[i], pts2[i], projection_matrix_prev, projection_matrix_curr, x3D_temp);
 
                     cout<<"["<<i<<"] x3D_temp = "<<x3D_temp.t()<<endl;
-
                 }
-
                 ////accumulating into the gloabal trasform
                 //if(!isGlobalRTInit)
                 //{

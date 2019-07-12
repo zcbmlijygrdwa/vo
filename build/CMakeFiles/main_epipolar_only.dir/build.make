@@ -98,6 +98,7 @@ main_epipolar_only: /usr/local/lib/libopencv_shape.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_photo.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_objdetect.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_calib3d.so.3.1.0
+main_epipolar_only: /home/zhenyu/Pangolin/build/src/libpangolin.so
 main_epipolar_only: /usr/local/lib/libopencv_features2d.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_ml.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_highgui.so.3.1.0
@@ -107,6 +108,21 @@ main_epipolar_only: /usr/local/lib/libopencv_flann.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_video.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_imgproc.so.3.1.0
 main_epipolar_only: /usr/local/lib/libopencv_core.so.3.1.0
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libGL.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libGLU.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libGLEW.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libEGL.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libwayland-client.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libwayland-egl.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libwayland-cursor.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libSM.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libICE.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libX11.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libXext.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libpng.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libz.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libjpeg.so
+main_epipolar_only: /usr/lib/x86_64-linux-gnu/libtiff.so
 main_epipolar_only: CMakeFiles/main_epipolar_only.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/zhenyu/vo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable main_epipolar_only"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main_epipolar_only.dir/link.txt --verbose=$(VERBOSE)

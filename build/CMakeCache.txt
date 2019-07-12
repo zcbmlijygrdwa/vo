@@ -208,11 +208,17 @@ OpenCV_LIB_DIR_DBG:PATH=
 //Path where release OpenCV libraries are located
 OpenCV_LIB_DIR_OPT:PATH=
 
+//The directory containing a CMake configuration file for Pangolin.
+Pangolin_DIR:PATH=/home/zhenyu/Pangolin/build/src
+
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=/home/zhenyu/vo/build
 
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=/home/zhenyu/vo
+
+//The directory containing a CMake configuration file for pangolin.
+pangolin_DIR:PATH=pangolin_DIR-NOTFOUND
 
 
 ########################

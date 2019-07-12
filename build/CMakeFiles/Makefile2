@@ -97,6 +97,43 @@ clean: CMakeFiles/main_epipolar_only.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/test_MapViewer.dir
+
+# All Build rule for target.
+CMakeFiles/test_MapViewer.dir/all:
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/depend
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zhenyu/vo/build/CMakeFiles --progress-num=3,4 "Built target test_MapViewer"
+.PHONY : CMakeFiles/test_MapViewer.dir/all
+
+# Include target in all.
+all: CMakeFiles/test_MapViewer.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/test_MapViewer.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zhenyu/vo/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test_MapViewer.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zhenyu/vo/build/CMakeFiles 0
+.PHONY : CMakeFiles/test_MapViewer.dir/rule
+
+# Convenience name for target.
+test_MapViewer: CMakeFiles/test_MapViewer.dir/rule
+
+.PHONY : test_MapViewer
+
+# clean rule for target.
+CMakeFiles/test_MapViewer.dir/clean:
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/clean
+.PHONY : CMakeFiles/test_MapViewer.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/test_MapViewer.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Special targets to cleanup operation of make.
 
 # Special rule to run CMake to check the build system integrity.

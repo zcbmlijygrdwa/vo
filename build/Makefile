@@ -123,6 +123,19 @@ main_epipolar_only/fast:
 	$(MAKE) -f CMakeFiles/main_epipolar_only.dir/build.make CMakeFiles/main_epipolar_only.dir/build
 .PHONY : main_epipolar_only/fast
 
+#=============================================================================
+# Target rules for targets named test_MapViewer
+
+# Build rule for target.
+test_MapViewer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_MapViewer
+.PHONY : test_MapViewer
+
+# fast build rule for target.
+test_MapViewer/fast:
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/build
+.PHONY : test_MapViewer/fast
+
 # target to build an object file
 main_epipolar_only.o:
 	$(MAKE) -f CMakeFiles/main_epipolar_only.dir/build.make CMakeFiles/main_epipolar_only.dir/main_epipolar_only.o
@@ -138,6 +151,21 @@ main_epipolar_only.s:
 	$(MAKE) -f CMakeFiles/main_epipolar_only.dir/build.make CMakeFiles/main_epipolar_only.dir/main_epipolar_only.s
 .PHONY : main_epipolar_only.s
 
+# target to build an object file
+test_MapViewer.o:
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/test_MapViewer.o
+.PHONY : test_MapViewer.o
+
+# target to preprocess a source file
+test_MapViewer.i:
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/test_MapViewer.i
+.PHONY : test_MapViewer.i
+
+# target to generate assembly for a file
+test_MapViewer.s:
+	$(MAKE) -f CMakeFiles/test_MapViewer.dir/build.make CMakeFiles/test_MapViewer.dir/test_MapViewer.s
+.PHONY : test_MapViewer.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -145,11 +173,15 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... main_epipolar_only"
 	@echo "... edit_cache"
+	@echo "... main_epipolar_only"
+	@echo "... test_MapViewer"
 	@echo "... main_epipolar_only.o"
 	@echo "... main_epipolar_only.i"
 	@echo "... main_epipolar_only.s"
+	@echo "... test_MapViewer.o"
+	@echo "... test_MapViewer.i"
+	@echo "... test_MapViewer.s"
 .PHONY : help
 
 

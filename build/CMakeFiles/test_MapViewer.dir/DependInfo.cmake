@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/zhenyu/vo/main_epipolar_only.cpp" "/home/zhenyu/vo/build/CMakeFiles/main_epipolar_only.dir/main_epipolar_only.o"
+  "/home/zhenyu/vo/test_MapViewer.cpp" "/home/zhenyu/vo/build/CMakeFiles/test_MapViewer.dir/test_MapViewer.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
