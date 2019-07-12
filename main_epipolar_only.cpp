@@ -7,6 +7,8 @@
 #include "vo_features.h"
 #include "MyMatcher.hpp"
 
+#include "CameraConfig.hpp"
+
 using namespace std;
 
 using namespace cv;
@@ -36,12 +38,6 @@ int main(int argc, char** argv)
 
 
     bool isSlamInit = false;
-    double k1 = -0.0000004;
-    double k2 = 0;
-    double p1 = 0;
-    double p2 = 0;
-    Mat distCoeffs = (Mat_<double>(1,4)<<k1, k2, p1, p2);
-    cout<<"distCoeffs = "<<distCoeffs<<endl;
 
 
     if(!cap.isOpened())
@@ -53,20 +49,27 @@ int main(int argc, char** argv)
     cap >> i_prev;
     cvtColor(i_prev,i_prev,CV_BGR2GRAY);
 
-    Point2d pp = Point2d(i_prev.cols/2., i_prev.rows/2);
+    //double k1 = -0.0000004;
+    //double k2 = 0;
+    //double p1 = 0;
+    //double p2 = 0;
+    //Mat distCoeffs = (Mat_<double>(1,4)<<k1, k2, p1, p2);
+    //cout<<"distCoeffs = "<<distCoeffs<<endl;
+    //Point2d pp = Point2d(i_prev.cols/2., i_prev.rows/2);
 
-    double focal_x = 1;
-    double focal_y = 1;
-
-    Mat camera_matrix = (Mat_<double>(3,3)<<focal_x, 0, pp.x, 0, focal_y, pp.y, 0, 0, 1);
-    cout<<"camera_matrix = "<<camera_matrix<<endl;
+    //double focal_x = 1;
+    //double focal_y = 1;
+    //Mat camera_matrix = (Mat_<double>(3,3)<<focal_x, 0, pp.x, 0, focal_y, pp.y, 0, 0, 1);
+    //cout<<"camera_matrix = "<<camera_matrix<<endl;
+    
+    CameraConfig camConfig = CameraConfig(i_prev);
 
     int count = 0;
 
     Mat newCameraMatrix;
     Mat i_undistort;
     //undistort the prev frame
-    undistort(i_prev, i_undistort, camera_matrix, distCoeffs, newCameraMatrix);
+    undistort(i_prev, i_undistort, camConfig.camera_matrix, camConfig.distCoeffs, newCameraMatrix);
     i_prev = i_undistort.clone();
         vector<Point2f> pts1, pts2;
     while(!i_prev.empty())
@@ -74,7 +77,7 @@ int main(int argc, char** argv)
         // capture new frame
         cap >> i_curr;
         //undistort the new frame
-        undistort(i_curr, i_undistort, camera_matrix, distCoeffs, newCameraMatrix);
+        undistort(i_curr, i_undistort, camConfig.camera_matrix, camConfig.distCoeffs, newCameraMatrix);
         i_curr = i_undistort.clone();
 
         count++;
@@ -124,7 +127,7 @@ int main(int argc, char** argv)
             //find essental matrix for pose recovery
             Mat essential_matrix;
             Mat mask;
-            essential_matrix = findEssentialMat(pts1,pts2,focal_x, pp, RANSAC, 0.99999999999, 1.0, mask);
+            essential_matrix = findEssentialMat(pts1,pts2,camConfig.focal_x, camConfig.pp, RANSAC, 0.99999999999, 1.0, mask);
 
             cout << "Essential matrix found: " << essential_matrix << endl;
             if(essential_matrix.empty())
@@ -137,7 +140,7 @@ int main(int argc, char** argv)
                 //recover pose from Essential matrix
                 int numInliers = 0;
                 Mat R, t;
-                numInliers = recoverPose(essential_matrix, pts1, pts2, R, t, focal_x, pp, mask);
+                numInliers = recoverPose(essential_matrix, pts1, pts2, R, t, camConfig.focal_x, camConfig.pp, mask);
 
                 cout<<"numInliers = "<<numInliers<<endl;
 
