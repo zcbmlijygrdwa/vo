@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
@@ -10,18 +8,14 @@
 #include "CameraConfig.hpp"
 
 using namespace std;
-
 using namespace cv;
-
-
-
 
 
 int main(int argc, char** argv)
 {
     cout<<"VO main program!"<<endl;
 
-    Mat R_f, t_f; //the final rotation and tranlation vectors containing the 
+    Mat R_f, t_f; //the final rotation and tranlation vectors 
 
     float scale = 1;
 
@@ -36,9 +30,8 @@ int main(int argc, char** argv)
     vector<KeyPoint> keypoints1, keypoints2;
     Mat descriptors1, descriptors2;
 
-
     bool isSlamInit = false;
-
+    bool isGlobalRTInit = false;
 
     if(!cap.isOpened())
     {
@@ -49,22 +42,7 @@ int main(int argc, char** argv)
     cap >> i_prev;
     cvtColor(i_prev,i_prev,CV_BGR2GRAY);
 
-    //double k1 = -0.0000004;
-    //double k2 = 0;
-    //double p1 = 0;
-    //double p2 = 0;
-    //Mat distCoeffs = (Mat_<double>(1,4)<<k1, k2, p1, p2);
-    //cout<<"distCoeffs = "<<distCoeffs<<endl;
-    //Point2d pp = Point2d(i_prev.cols/2., i_prev.rows/2);
-
-    //double focal_x = 1;
-    //double focal_y = 1;
-    //Mat camera_matrix = (Mat_<double>(3,3)<<focal_x, 0, pp.x, 0, focal_y, pp.y, 0, 0, 1);
-    //cout<<"camera_matrix = "<<camera_matrix<<endl;
-    
     CameraConfig camConfig = CameraConfig(i_prev);
-
-    int count = 0;
 
     Mat newCameraMatrix;
     Mat i_undistort;
@@ -80,19 +58,11 @@ int main(int argc, char** argv)
         undistort(i_curr, i_undistort, camConfig.camera_matrix, camConfig.distCoeffs, newCameraMatrix);
         i_curr = i_undistort.clone();
 
-        count++;
-        if(count%5!=1)
-        {
-            //continue;
-        }
         cvtColor(i_curr,i_curr,CV_BGR2GRAY);
 
         //extract orb features
-
-
         orb->detectAndCompute(i_prev,Mat(),keypoints1, descriptors1);
         orb->detectAndCompute(i_curr,Mat(),keypoints2, descriptors2);
-
 
         Mat i_prev_kp, i_curr_kp;
 
@@ -144,8 +114,9 @@ int main(int argc, char** argv)
 
                 cout<<"numInliers = "<<numInliers<<endl;
 
-                if(count==1)
+                if(!isGlobalRTInit)
                 {
+                    isGlobalRTInit = true;
                     R_f = R.clone();
                     t_f = t.clone();
                     cout<<"R_f t_f init!"<<endl;
