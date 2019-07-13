@@ -4,20 +4,32 @@
 class MapPoint
 {
 
-private:
+    private:
 
 
-public:
+    public:
 
-//3D position
-//Point3f position;
+        float x;
+        float y;
+        float z;
 
-//ORB decriptor
-//Descriptor descriptor;
+        MapPoint(float xi, float yi, float zi)
+        {
+            x = xi;
+            y = yi;
+            z = zi;
+        }
 
-//maximum and minimumu observed distance
-float observed_distance_max;
-float observed_distance_min;
+
+        //3D position
+        //Point3f position;
+
+        //ORB decriptor
+        //Descriptor descriptor;
+
+        //maximum and minimumu observed distance
+        float observed_distance_max;
+        float observed_distance_min;
 
 
 };

@@ -11,15 +11,18 @@
 #include "MapPoint.hpp"
 #include "MapViewer.hpp"
 
+#include <thread>
+
 using namespace std;
 using namespace cv;
-
 
 int main(int argc, char** argv)
 {
     cout<<"VO main program!"<<endl;
 
     Mat R_f, t_f; //the final rotation and tranlation vectors 
+
+    std::vector<MapPoint> points;
 
     float scale = 1;
 
@@ -48,6 +51,9 @@ int main(int argc, char** argv)
 
     Camera cam = Camera(i_prev);
 
+    MapViewer *mv = new MapViewer();
+    mv -> setDataSource(&points);
+    std::thread first (&MapViewer::spin, *mv);
 
     Mat newCameraMatrix;
     Mat i_undistort;
@@ -142,7 +148,10 @@ int main(int argc, char** argv)
                     Calculation::Triangulate(pts1[i], pts2[i], projection_matrix_prev, projection_matrix_curr, x3D_temp);
 
                     cout<<"["<<i<<"] x3D_temp = "<<x3D_temp.t()<<endl;
+                    points.push_back(MapPoint(x3D_temp.at<float>(0)/1000.0, x3D_temp.at<float>(1)/1000.0, x3D_temp.at<float>(2)/1000.0));
                 }
+
+
                 ////accumulating into the gloabal trasform
                 //if(!isGlobalRTInit)
                 //{
