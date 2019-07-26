@@ -46,7 +46,7 @@ point_2d_v1 = point_2d_v1(1:2,:);
 
 %%% Transform 2
 
-R_rpy = [0.1,0.2,0.2];
+R_ryp = [0.1,0.2,0.2];
 roll = R_ryp(1);
 pitch = R_ryp(2);
 yaw = R_ryp(3);
