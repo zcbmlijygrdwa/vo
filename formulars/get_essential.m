@@ -51,6 +51,8 @@ e = K'*f*K
 
 
 
+%https://www.cnblogs.com/houkai/p/6665506.html
+
 %recover R t
 [U,S,V] = svd(e);
 
@@ -59,11 +61,14 @@ R_z = [cos(yaw) -sin(yaw) 0
     sin(yaw) cos(yaw) 0
     0 0 1];
 
-R1 = U*R_z*V'
+R1 = U*R_z*V';
 
 Z = R_z;
 Z(3,3) = 0;
-t1 = U*Z*U'
+S1 = U*Z*U';
+
+%recover translation from skew symmetric matrix
+t1 = [S1(3,2), S1(1,3), S1(2,1)]';
 
 
 yaw = -pi/2;
@@ -71,12 +76,24 @@ R_z = [cos(yaw) -sin(yaw) 0
     sin(yaw) cos(yaw) 0
     0 0 1];
 
-R2 = U*R_z*V'
+R2 = U*R_z*V';
 
 Z = R_z;
 Z(3,3) = 0;
 
 
-t2 = U*Z*U'
+S2 = U*Z*U';
+%recover translation from skew symmetric matrix
+t2 = [S2(3,2), S2(1,3), S2(2,1)]';
+
+
+%two rotations and two translations form 4 solutions of [R | t].
+
+T1 = [R1,t1];
+T2 = [R1,t2];
+T3 = [R2,t1];
+T4 = [R2,t2];
+
+
 
 
