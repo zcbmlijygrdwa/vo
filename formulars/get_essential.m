@@ -24,7 +24,8 @@ for(i = 1:size(point_2d_v1,2))
     
 end
 
-%use SVD to get e
+% solve A*e = 0 for e
+% use SVD to get e
 [U,S,V] = svd(A);
 f = V(:,end)
 f = reshape(f,3,3)
@@ -70,6 +71,7 @@ S1 = U*Z*U';
 %recover translation from skew symmetric matrix
 t1 = [S1(3,2), S1(1,3), S1(2,1)]';
 
+%here t is unified so it losses scale factor
 
 yaw = -pi/2;
 R_z = [cos(yaw) -sin(yaw) 0
@@ -86,6 +88,8 @@ S2 = U*Z*U';
 %recover translation from skew symmetric matrix
 t2 = [S2(3,2), S2(1,3), S2(2,1)]';
 
+%here t is unified so it losses scale factor
+
 
 %two rotations and two translations form 4 solutions of [R | t].
 
@@ -93,6 +97,19 @@ T1 = [R1,t1];
 T2 = [R1,t2];
 T3 = [R2,t1];
 T4 = [R2,t2];
+
+
+
+
+% to verify x' * F * x = 0; (epilopar constrain)
+point_2d_v1_homo = [point_2d_v1 ; ones(1,size(point_2d_v1,2))];
+point_2d_v2_homo = [point_2d_v2 ; ones(1,size(point_2d_v2,2))];
+test_result = point_2d_v1_homo'*f*point_2d_v2_homo;
+test_result = det(test_result)
+
+
+
+
 
 
 
