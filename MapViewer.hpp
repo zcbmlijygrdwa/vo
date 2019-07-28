@@ -41,7 +41,7 @@ class MapViewer
 
         void spin()
         {
-            pangolin::CreateWindowAndBind("Main",640,480);
+            pangolin::CreateWindowAndBind("Main",1280,960);
             glEnable(GL_DEPTH_TEST);
 
             // Define Projection and initial ModelView matrix

@@ -30,8 +30,8 @@ class Camera
         cv::Mat K;
         Camera(Mat &sample)
         {
-            fx = 1;
-            fy = 1;
+            fx = 482.096858;
+            fy = 456.548301;
 
             cx = sample.cols/2.;
             cy = sample.rows/2.;
