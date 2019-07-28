@@ -115,7 +115,9 @@ fundamental_mat_constrain_test_result = det(fundamental_mat_constrain_test_resul
 % between the four different solutions for the camera matrix P
 % Multiple view geometry in computer vision, 2nd version, p259
 
+%try T1
 x_3d_recover = [];
+isTrueSolution = true;
 for i = 1:size(point_2d_v1,2)
     
     x1 = point_2d_v1(1,i);
@@ -133,8 +135,104 @@ for i = 1:size(point_2d_v1,2)
     
     if(depth_in_cam_1<0 || depth_in_cam_2<0)
         disp("point found behind a camera, wrong solution.");
+        isTrueSolution = false;
+        break;
     end
+end
+
+
+if(isTrueSolution)
+   disp("all points produce positive distance to cameras, solution found as T1.") 
+end
+
+
+%try T2
+x_3d_recover = [];
+isTrueSolution = true;
+for i = 1:size(point_2d_v1,2)
     
+    x1 = point_2d_v1(1,i);
+    y1 = point_2d_v1(2,i);
+    
+    x2 = point_2d_v2(1,i);
+    y2 = point_2d_v2(2,i);
+    
+    x_3d_temp = my_triangulation(x1,y1,x2,y2,K,T2);
+    x_3d_recover = [x_3d_recover, x_3d_temp];
+    
+    
+    depth_in_cam_1 = point_depth_from_camera(K,R1,camera1_position_in_world_frame,x_3d_temp(1:3,:));
+    depth_in_cam_2 = point_depth_from_camera(K,R2,camera2_position_in_world_frame,x_3d_temp(1:3,:));
+    
+    if(depth_in_cam_1<0 || depth_in_cam_2<0)
+        disp("point found behind a camera, T2 is wrong solution.");
+        isTrueSolution = false;
+        break;
+    end
+end
+
+if(isTrueSolution)
+   disp("all points produce positive distance to cameras, solution found as T2.") 
+end
+
+
+%try T3
+x_3d_recover = [];
+isTrueSolution = true;
+for i = 1:size(point_2d_v1,2)
+    
+    x1 = point_2d_v1(1,i);
+    y1 = point_2d_v1(2,i);
+    
+    x2 = point_2d_v2(1,i);
+    y2 = point_2d_v2(2,i);
+    
+    x_3d_temp = my_triangulation(x1,y1,x2,y2,K,T3);
+    x_3d_recover = [x_3d_recover, x_3d_temp];
+    
+    
+    depth_in_cam_1 = point_depth_from_camera(K,R1,camera1_position_in_world_frame,x_3d_temp(1:3,:));
+    depth_in_cam_2 = point_depth_from_camera(K,R2,camera2_position_in_world_frame,x_3d_temp(1:3,:));
+    
+    if(depth_in_cam_1<0 || depth_in_cam_2<0)
+        disp("point found behind a camera, T3 is wrong solution.");
+        isTrueSolution = false;
+        break;
+    end
+end
+
+if(isTrueSolution)
+   disp("all points produce positive distance to cameras, solution found as T3.") 
+end
+
+
+%try T4
+x_3d_recover = [];
+isTrueSolution = true;
+for i = 1:size(point_2d_v1,2)
+    
+    x1 = point_2d_v1(1,i);
+    y1 = point_2d_v1(2,i);
+    
+    x2 = point_2d_v2(1,i);
+    y2 = point_2d_v2(2,i);
+    
+    x_3d_temp = my_triangulation(x1,y1,x2,y2,K,T4);
+    x_3d_recover = [x_3d_recover, x_3d_temp];
+    
+    
+    depth_in_cam_1 = point_depth_from_camera(K,R1,camera1_position_in_world_frame,x_3d_temp(1:3,:));
+    depth_in_cam_2 = point_depth_from_camera(K,R2,camera2_position_in_world_frame,x_3d_temp(1:3,:));
+    
+    if(depth_in_cam_1<0 || depth_in_cam_2<0)
+        disp("point found behind a camera, T4 is wrong solution.");
+        isTrueSolution = false;
+        break;
+    end
+end
+
+if(isTrueSolution)
+   disp("all points produce positive distance to cameras, solution found as T4.") 
 end
 
 

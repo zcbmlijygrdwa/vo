@@ -35,7 +35,9 @@ camera1_position_in_world_frame = [0, 0, 0];
 
 R1 = eye(3);
 
-point_2d_homogenous = K*T*points_3d_homo;
+P = K*R1*[eye(3) , -camera1_position_in_world_frame'];
+
+point_2d_homogenous = P*points_3d_homo;
 point_2d_v1 = point_2d_homogenous;
 
 for(i  = 1:size(point_2d_v1,2))
