@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     Mat R_f, t_f; //the final rotation and tranlation vectors 
 
     std::vector<MapPoint> points;
-
+    std::vector<Point3f> points_3d;
     float scale = 1;
 
     VideoCapture cap("../dash.mp4");
@@ -89,19 +89,28 @@ int main(int argc, char** argv)
         //mmc -> matchKeypoints(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
 
         ////use optical flow
-        //mmc -> matchKeypointsWithKLTFusion(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+        //mmc -> matchKeypointsWithKLT(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
 
         ////use optical flow as primary
-        mmc -> KLTthenFeature(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+        //mmc -> KLTthenFeature(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
 
-        cout<<"pts1 size = "<<pts1.size()<<endl;
-        cout<<"pts2 size = "<<pts2.size()<<endl;
+        //cout<<"pts1 size = "<<pts1.size()<<endl;
+        //cout<<"pts2 size = "<<pts2.size()<<endl;
 
 
 
         //check if slam is init
         if(!isSlamInit)
         {
+
+            cout<<"Slam is not init, finding the first set of 3D points..."<<endl;
+
+            ////use pure feature matching
+            cout<<"use pure feature matching..."<<endl;
+            mmc -> matchKeypoints(pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+            cout<<"pts1 size = "<<pts1.size()<<endl;
+            cout<<"pts2 size = "<<pts2.size()<<endl;
+
             //use epipolar f=geometry to solve for fundamental matrix
             Mat fundamental_matrix;
 
@@ -149,8 +158,14 @@ int main(int argc, char** argv)
 
                     cout<<"["<<i<<"] x3D_temp = "<<x3D_temp.t()<<endl;
                     points.push_back(MapPoint(x3D_temp.at<float>(0)/1000.0, x3D_temp.at<float>(1)/1000.0, x3D_temp.at<float>(2)/1000.0));
+                    points_3d.push_back(cv::Point3f(x3D_temp.at<float>(0), x3D_temp.at<float>(1), x3D_temp.at<float>(2)));
                 }
 
+
+                isSlamInit = true;
+                cout<<"Slam is initialized with 3D points."<<endl;
+
+        pts1 = pts2;
 
                 ////accumulating into the gloabal trasform
                 //if(!isGlobalRTInit)
@@ -178,6 +193,30 @@ int main(int argc, char** argv)
         }
         else
         {
+            ////use optical flow
+            cout<<"use optical flow..."<<endl;
+            mmc -> matchKeypointsWithKLT(points_3d, pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+
+            cout<<"pts1 size = "<<pts1.size()<<endl;
+            cout<<"pts2 size = "<<pts2.size()<<endl;
+
+
+            cout<<"calculate camera motion with PnP method"<<endl;
+
+            // Output rotation and translation
+            cv::Mat rotation_vector; // Rotation in axis-angle form
+            cv::Mat translation_vector;
+
+            cout<<"points_3d.size()  = "<<points_3d.size()<<endl;
+            cout<<"pts2,.size()  = "<<pts2.size()<<endl;
+            // Solve for pose
+            cv::solvePnP(points_3d, pts2, cam.K, cam.distCoeffs, rotation_vector, translation_vector);
+
+
+
+            cout<<"rotation_vector = "<<rotation_vector<<endl;
+            cout<<"translation_vector = "<<translation_vector<<endl;
+
 
         }
 

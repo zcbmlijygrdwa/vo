@@ -82,9 +82,73 @@ template <class T>
 
                 return matches.size();
             }
+        
+        template <class T>
+            int matchKeypointsWithKLT(vector<Point3_<T> > &points_3d, vector<Point_<T> > &pts1, vector<Point_<T> > &pts2, Mat &descriptors1, Mat &descriptors2, vector<KeyPoint> &keypoints1, vector<KeyPoint> &keypoints2, Mat &i_prev, Mat &i_curr)
+            {
+                vector<uchar> status;
+
+                //use optical flow
+                vector<Point2f> pts2_optiflow;
+                featureTracking(i_prev, i_curr, pts1, pts2_optiflow, status);
+
+                cout<<"status.size() = "<<status.size()<<endl;
+                
+                vector<Point2f> pts1_final, pts2_final;
+                vector<Point3f> points_3d_final;
+
+                int trackedNumber = 0;
+
+                for(int i = 0 ; i < status.size() ; i++)
+                {
+                    cout<<int(status[i])<<",";
+                    if(int(status[i]==1))
+                    {
+                        trackedNumber++;
+                        pts1_final.push_back(pts1[i]);
+                        pts2_final.push_back(pts2[i]);
+                        points_3d_final.push_back(points_3d[i]);
+
+                    }
+                }
+                cout<<endl;
+
+                cout<<trackedNumber<<" of points are tracked between prev and curr."<<endl;
+
+
+
+                //further refine matches based on tracked results
+                //???????
+                //float thres = 1;
+                //for(int i = 0 ; i < pts1.size(); i++)
+                //{
+                //    if(diff(pts2[i] , pts2_optiflow[i])<thres)
+                //    {
+                //        pts1_final.push_back(pts1[i]);
+                //        pts2_final.push_back(pts2[i]);
+                //        points_3d_final.push_back(points_3d[i]);
+                //    }
+                //}
+
+                //cout<<"After fusing feature matching and KLT results, "<<pts1_final.size()<<" points are mathced with "<<pts2_final.size()<<" points."<<endl;
+
+
+
+
+                pts1 = pts1_final;
+                pts2 = pts2_final;
+                points_3d = points_3d_final;
+                
+                //draw tracked matches
+                myDrawMatches("matches_KLT", i_prev, i_curr, pts1_final, pts2_final);
+
+
+
+                return pts1.size();
+            }
 
         template <class T>
-            int matchKeypointsWithKLTFusion(vector<Point_<T> > &pts1, vector<Point_<T> > &pts2, Mat &descriptors1, Mat &descriptors2, vector<KeyPoint> &keypoints1, vector<KeyPoint> &keypoints2, Mat &i_prev, Mat &i_curr)
+            int matchKeypointsWithKLTFusion(vector<Point3_<T> > &points_3d, vector<Point_<T> > &pts1, vector<Point_<T> > &pts2, Mat &descriptors1, Mat &descriptors2, vector<KeyPoint> &keypoints1, vector<KeyPoint> &keypoints2, Mat &i_prev, Mat &i_curr)
             {
                 vector<uchar> status;
 
@@ -112,12 +176,14 @@ myDrawMatches("matches_track", i_prev, i_curr, pts1, pts2);
                 //further refine matches based on tracked results
                 float thres = 1;
                 vector<Point2f> pts1_final, pts2_final;
+                vector<Point3f> points_3d_final;
                 for(int i = 0 ; i < pts1.size(); i++)
                 {
                     if(diff(pts2[i] , pts2_optiflow[i])<thres)
                     {
                         pts1_final.push_back(pts1[i]);
                         pts2_final.push_back(pts2[i]);
+                        points_3d_final.push_back(points_3d[i]);
                     }
                 }
 
@@ -133,6 +199,7 @@ myDrawMatches("matches_fuse", i_prev, i_curr, pts1_final, pts2_final);
 
                 pts1 = pts1_final;
                 pts2 = pts2_final;
+                points_3d = points_3d_final;
                 return pts1.size();
             }
 
