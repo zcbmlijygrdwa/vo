@@ -29,11 +29,11 @@ K = [482.096858 0 456.548301
 % no rotation
 % at the origin point of the world frame
 
-%R1 = I
-%t1 = 0;
-R = eye(3);
-t = [0,0,0];
-T = [R t']
+camera1_rotation_in_world_frame = [0, 0, 0]; % rpy: roll, pitch, yaw
+camera1_position_in_world_frame = [0, 0, 0];
+
+
+R1 = eye(3);
 
 point_2d_homogenous = K*T*points_3d_homo;
 point_2d_v1 = point_2d_homogenous;
@@ -52,10 +52,10 @@ point_2d_v1 = point_2d_v1(1:2,:);
 % with rotation
 % not at the origin point of the world frame
 
-camera_rotation_in_world_frame = [0.1,0.2,0.2]; % rpy: roll, pitch, yaw
-camera_position_in_world_frame = [0.4,0.5,0.7];
+camera2_rotation_in_world_frame = [0.1,0.2,0.2]; % rpy: roll, pitch, yaw
+camera2_position_in_world_frame = [0.4,0.5,0.7];
 
-R_rpy = camera_rotation_in_world_frame;
+R_rpy = camera2_rotation_in_world_frame;
 roll = R_rpy(1);
 pitch = R_rpy(2);
 yaw = R_rpy(3);
@@ -75,7 +75,7 @@ R_yaw = [cos(yaw) -sin(yaw) 0
     sin(yaw) cos(yaw) 0
     0 0 1]
 
-R = R_roll * R_pitch * R_yaw
+R2 = R_roll * R_pitch * R_yaw
 
 
 
@@ -88,8 +88,8 @@ R = R_roll * R_pitch * R_yaw
 % camera from world origin to its position. So t = -R * C. So the trasform
 % T is actually [ R | t ] or [ R | -R*C ].
 
-P_form1 = K*R*[eye(3) , -camera_position_in_world_frame'];
-P_form2 = K*[R , -R*camera_position_in_world_frame'];
+P_form1 = K*R2*[eye(3) , -camera2_position_in_world_frame'];
+P_form2 = K*[R2 , -R2*camera2_position_in_world_frame'];
 
 
 % P_form1 and P_form2 are the same, here take P_form1
