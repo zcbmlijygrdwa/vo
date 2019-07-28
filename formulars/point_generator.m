@@ -24,7 +24,10 @@ K = [482.096858 0 456.548301
     0.000000, 0.000000, 1.000000];
 
 
-%%% Transform 1
+%%% Cam pose 1
+
+% no rotation
+% at the origin point of the world frame
 
 %R1 = I
 %t1 = 0;
@@ -44,12 +47,18 @@ point_2d_v1 = point_2d_v1(1:2,:);
 
 
 
-%%% Transform 2
+%%% Cam pose 2
 
-R_ryp = [0.1,0.2,0.2];
-roll = R_ryp(1);
-pitch = R_ryp(2);
-yaw = R_ryp(3);
+% with rotation
+% not at the origin point of the world frame
+
+camera_rotation_in_world_frame = [0.1,0.2,0.2]; % rpy: roll, pitch, yaw
+camera_position_in_world_frame = [0.4,0.5,0.7];
+
+R_rpy = camera_rotation_in_world_frame;
+roll = R_rpy(1);
+pitch = R_rpy(2);
+yaw = R_rpy(3);
 
 
 
@@ -70,11 +79,27 @@ R = R_roll * R_pitch * R_yaw
 
 
 
-t = [0.4,0.5,0.7];
+% PROJECTION
+% Multiple view geometry in computer vision 2nd version
+% x = P*X
 
-T = [R t']
+% form1: P = K*R*[ I | -C ], with C as the camera position in world from
+% form2: P = K*[ R | t ], with t as the negative of the translation of the
+% camera from world origin to its position. So t = -R * C. So the trasform
+% T is actually [ R | t ] or [ R | -R*C ].
 
-point_2d_homogenous = K*T*points_3d_homo;
+P_form1 = K*R*[eye(3) , -camera_position_in_world_frame'];
+P_form2 = K*[R , -R*camera_position_in_world_frame'];
+
+
+% P_form1 and P_form2 are the same, here take P_form1
+
+P = P_form1;
+
+point_2d_homogenous = P*points_3d_homo;
+
+
+
 point_2d_v2 = point_2d_homogenous;
 
 for(i  = 1:size(point_2d_v2,2))
