@@ -51,9 +51,9 @@ int main(int argc, char** argv)
 
     Camera cam = Camera(i_prev);
 
-    MapViewer *mv = new MapViewer();
-    mv -> setDataSource(&points);
-    std::thread first (&MapViewer::spin, *mv);
+    //MapViewer *mv = new MapViewer();
+    //mv -> setDataSource(&points);
+    //std::thread first (&MapViewer::spin, *mv);
 
     Mat newCameraMatrix;
     Mat i_undistort;
@@ -71,17 +71,6 @@ int main(int argc, char** argv)
 
         cvtColor(i_curr,i_curr,CV_BGR2GRAY);
 
-        //extract orb features
-        orb->detectAndCompute(i_prev,Mat(),keypoints1, descriptors1);
-        orb->detectAndCompute(i_curr,Mat(),keypoints2, descriptors2);
-
-        Mat i_prev_kp, i_curr_kp;
-
-        //drawKeypoints(i_prev, keypoints1, i_prev_kp, Scalar::all(-1),DrawMatchesFlags::DEFAULT);
-        //drawKeypoints(i_curr, keypoints2, i_curr_kp, Scalar::all(-1),DrawMatchesFlags::DEFAULT);
-
-        //imshow("prev keypoints",i_prev_kp);
-        //imshow("curr keypoints",i_curr_kp);
 
         MyMatcher *mmc = new MyMatcher();
 
@@ -104,6 +93,16 @@ int main(int argc, char** argv)
         {
 
             cout<<"Slam is not init, finding the first set of 3D points..."<<endl;
+            //extract orb features
+            orb->detectAndCompute(i_prev,Mat(),keypoints1, descriptors1);
+            orb->detectAndCompute(i_curr,Mat(),keypoints2, descriptors2);
+
+
+            cout<<"keypoints1.size() = "<<keypoints1.size()<<endl;
+            cout<<"descriptors1.type() = "<<descriptors1.type()<<endl;
+            cout<<"descriptors1.rows = "<<descriptors1.rows<<endl;
+            cout<<"descriptors1.cols = "<<descriptors1.cols<<endl;
+
 
             ////use pure feature matching
             cout<<"use pure feature matching..."<<endl;
@@ -165,7 +164,7 @@ int main(int argc, char** argv)
                 isSlamInit = true;
                 cout<<"Slam is initialized with 3D points."<<endl;
 
-        pts1 = pts2;
+                pts1 = pts2;
 
                 ////accumulating into the gloabal trasform
                 //if(!isGlobalRTInit)
@@ -188,14 +187,38 @@ int main(int argc, char** argv)
 
                 //cout<<"Coordinates: x = "<<t_f.at<double>(0)<<" y = "<<t_f.at<double>(1)<<" z = "<<t_f.at<double>(2)<<endl;
 
+                keypoints1 = keypoints2;
+
+                descriptors1 = descriptors2;
             }
 
         }
         else
         {
-            ////use optical flow
-            cout<<"use optical flow..."<<endl;
-            mmc -> matchKeypointsWithKLT(points_3d, pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+            //extract orb features
+            orb->detectAndCompute(i_curr,Mat(),keypoints2, descriptors2);
+
+
+            cout<<"keypoints1.size() = "<<keypoints1.size()<<endl;
+            cout<<"descriptors1.type() = "<<descriptors1.type()<<endl;
+            cout<<"descriptors1.rows = "<<descriptors1.rows<<endl;
+            cout<<"descriptors1.cols = "<<descriptors1.cols<<endl;
+            ////use optical flow to track
+            //cout<<"use optical flow..."<<endl;
+            //mmc -> matchKeypointsWithKLT(points_3d, pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr);
+
+
+
+            // use small area search to track
+            cout<<"each feature search itself in small area in new frame"<<endl;
+
+            mmc -> matchKeypointsSmallArea(points_3d, pts1, pts2, descriptors1, descriptors2, keypoints1, keypoints2, i_prev, i_curr); 
+
+            cout<<"after small area, keypoints1.size() = "<<keypoints1.size()<<endl;
+            cout<<"after small area, descriptors1.type() = "<<descriptors1.type()<<endl;
+            cout<<"after small area, descriptors1.rows = "<<descriptors1.rows<<endl;
+            cout<<"after small area, descriptors1.cols = "<<descriptors1.cols<<endl;
+
 
             cout<<"pts1 size = "<<pts1.size()<<endl;
             cout<<"pts2 size = "<<pts2.size()<<endl;
